@@ -1,4 +1,4 @@
-package src;
+package FractalDrawing;
 
 public interface FractalElement {
 }

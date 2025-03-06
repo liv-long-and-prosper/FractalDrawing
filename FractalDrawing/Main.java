@@ -1,11 +1,11 @@
-package src;
+package FractalDrawing;
 
-import javax.swing.*;
+import src.FractalGui;
 
 public class Main {
     public static void main(String[] args){
        try{
-           FractalGui testGui = new FractalGui();} catch (Exception e) {
+           src.FractalGui testGui = new FractalGui();} catch (Exception e) {
            System.out.println("Error: "+e);
            System.exit(0);
        }
