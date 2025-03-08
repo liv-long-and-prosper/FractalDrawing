@@ -1,9 +1,11 @@
-package FractalDrawing;
-
-import javax.swing.*;
+package src;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
+import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 public class FractalGui extends JFrame {
     private final int STARTING_X = 25;
@@ -35,7 +37,11 @@ public class FractalGui extends JFrame {
 
     private JButton drawFractal;
 
-    public FractalGui() throws UnsupportedLookAndFeelException, ClassNotFoundException, InstantiationException, IllegalAccessException {
+    private FractalSubject subj;
+
+    public FractalGui(FractalSubject subj) throws UnsupportedLookAndFeelException, ClassNotFoundException, InstantiationException, IllegalAccessException {
+        this.subj = subj;
+
         UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
 
         setTitle("Fractal Settings");
@@ -102,6 +108,12 @@ public class FractalGui extends JFrame {
         drawFractal = new JButton("DRAW THE FRACTAL!");
         drawFractal.setBounds(STARTING_X+75,fractalColor.getY()+fractalColor.getHeight()+25,200,30);
         mainPanel.add(drawFractal);
+        drawFractal.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                subj.setOptions();
+            }
+        });
 
         setVisible(true);
     }
