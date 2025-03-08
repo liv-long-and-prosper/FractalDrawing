@@ -1,6 +1,4 @@
-package src;
-
-import javax.swing.*;
+package FractalDrawing.src;
 
 public class Main {
     public static void main(String[] args){

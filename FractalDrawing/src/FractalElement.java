@@ -1,4 +1,4 @@
-package src;
+package FractalDrawing.src;
 
 import java.awt.*;
 
