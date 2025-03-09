@@ -2,8 +2,12 @@ package FractalDrawing.src;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentListener;
+import java.util.Random;
 
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 public class FractalGui extends JFrame {
     private final int STARTING_X = 25;
@@ -18,7 +22,7 @@ public class FractalGui extends JFrame {
     private final int MAIN_PANEL_HEIGHT = 400;
     private final int SLIDER_PANEL_WIDTH = 350;
     private final int SLIDER_PANEL_HEIGHT = 100;
-    private final Color DEFAULT_COLOR = new Color(255, 183, 206);
+    private final Color DEFAULT_COLOR = new Color(255, 183, 206, OPACITY_DEFAULT);
 
     private JPanel recursionSliderPanel;
     private JLabel recursionLabel;
@@ -29,8 +33,10 @@ public class FractalGui extends JFrame {
     private JLabel opacityLabel;
     private JSlider opacitySlider;
     private int opacityVal;
+    private boolean opacityChanged;
 
     private JButton fractalColor;
+    private JPanel chosenColor;
     private Color currentColor;
 
     private JButton drawFractal;
@@ -39,6 +45,9 @@ public class FractalGui extends JFrame {
 
     public FractalGui(FractalSubject subj) throws UnsupportedLookAndFeelException, ClassNotFoundException, InstantiationException, IllegalAccessException {
         this.subj = subj;
+        this.recursionVal = RECURSION_DEFAULT;
+        this.opacityVal = OPACITY_DEFAULT;
+        this.currentColor = DEFAULT_COLOR;
 
         UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
 
@@ -62,10 +71,8 @@ public class FractalGui extends JFrame {
         recursionSlider = createSlider(RECURSION_MIN, RECURSION_MAX, RECURSION_DEFAULT, 1, false);
         recursionSliderPanel.add(recursionSlider);
         recursionSlider.addChangeListener(e -> {
-            JSlider source = (JSlider)e.getSource();
-            if(!source.getValueIsAdjusting()){
-                recursionVal = source.getValue();
-            }
+                recursionVal = recursionSlider.getValue();
+                subj.setOptions(recursionVal, opacityVal, currentColor);
         });
 
         opacitySliderPanel = new JPanel(new GridLayout(0,1));
@@ -80,14 +87,17 @@ public class FractalGui extends JFrame {
         opacitySlider = createSlider(OPACITY_MIN, OPACITY_MAX, OPACITY_DEFAULT, OPACITY_SLIDER_INCREMENTS, true);
         opacitySliderPanel.add(opacitySlider);
         opacitySlider.addChangeListener(e -> {
-            JSlider source = (JSlider)e.getSource();
-            if(!source.getValueIsAdjusting()){
-                opacityVal = source.getValue();
+            if(!opacitySlider.getValueIsAdjusting()) {
+                opacityVal = opacitySlider.getValue();
+                int alphaVal = (opacityVal * 255) / 100;
+                currentColor = new Color(currentColor.getRed(), currentColor.getGreen(), currentColor.getBlue(), alphaVal);
+                chosenColor.setBackground(currentColor);
+                subj.setOptions(recursionVal, opacityVal, currentColor);
             }
         });
 
         currentColor = DEFAULT_COLOR;
-        JPanel chosenColor = new JPanel(null);
+        chosenColor = new JPanel(null);
         chosenColor.setBounds(STARTING_X+100,opacitySliderPanel.getY()+opacitySliderPanel.getHeight()+25, 50, 20);
         chosenColor.setBackground(currentColor);
         mainPanel.add(chosenColor);
@@ -99,8 +109,11 @@ public class FractalGui extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 Color initialColor = currentColor;
-                Color currentColor = JColorChooser.showDialog(mainPanel, "Select a color", initialColor);
+                currentColor = JColorChooser.showDialog(mainPanel, "Select a color", initialColor);
+                int alphaVal = (opacityVal*255)/100;
+                currentColor = new Color(currentColor.getRed(), currentColor.getGreen(), currentColor.getBlue(), alphaVal);
                 chosenColor.setBackground(currentColor);
+                subj.setOptions(recursionVal, opacityVal, currentColor);
             }});
 
         drawFractal = new JButton("DRAW THE FRACTAL!");
@@ -109,10 +122,19 @@ public class FractalGui extends JFrame {
         drawFractal.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                subj.setOptions();
+                Random rand = new Random();
+                int randomDepth = rand.nextInt(1,9);
+                recursionSlider.setValue(randomDepth);
+                int randomOpacity = rand.nextInt(0,101);
+                opacitySlider.setValue(randomOpacity);
+                int randomAlpha = (randomOpacity*255)/100;
+                Color randomColor = new Color(rand.nextInt(0,256), rand.nextInt(0,256), rand.nextInt(0,256), randomAlpha);
+                chosenColor.setBackground(randomColor);
+                subj.setOptions(randomDepth, randomOpacity, randomColor);
             }
         });
 
+        subj.setOptions(RECURSION_DEFAULT, OPACITY_DEFAULT, currentColor);
         setVisible(true);
     }
 
