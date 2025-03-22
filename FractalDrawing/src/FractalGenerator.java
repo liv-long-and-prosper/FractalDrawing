@@ -7,7 +7,7 @@ public class FractalGenerator implements FractalSubject{
     private ArrayList<FractalObserver> observers;
     private int recursionDepth;
     private int opacity;
-    private Color color;
+    private Color[] colors;
     private int[] xPoints;
     private int[] yPoints;
     private int[] circleCoordinates;
@@ -37,10 +37,10 @@ public class FractalGenerator implements FractalSubject{
     }
 
     @Override
-    public void setOptions(int recursionDepth, int opacity, Color color) {
+    public void setOptions(int recursionDepth, int opacity, Color[] colors) {
         this.recursionDepth = recursionDepth;
         this.opacity = opacity;
-        this.color = color;
+        this.colors = colors;
         notifyObservers();
     }
 
@@ -51,15 +51,15 @@ public class FractalGenerator implements FractalSubject{
         yPoints = new int[3];
         calculateTriangleCoordinates(width, height);
         ArrayList<FractalElement> fractalData = new ArrayList<>();
-        drawRecursiveFractal(xPoints, yPoints, color, recursionDepth, fractalData);
+        drawRecursiveFractal(xPoints, yPoints, colors, recursionDepth, fractalData);
         return fractalData;
     }
 
-    private void drawRecursiveFractal(int[] xPoints, int[] yPoints, Color color, int recursionDepth, ArrayList<FractalElement> fractalData) {
+    private void drawRecursiveFractal(int[] xPoints, int[] yPoints, Color[] colors, int recursionDepth, ArrayList<FractalElement> fractalData) {
         if (recursionDepth == 0) {
             return;
         } else {
-            fractalData.add(new Triangle(xPoints, yPoints, color));
+            fractalData.add(new Triangle(xPoints, yPoints, colors));
 
             int[][] midPoints = new int[3][2];
             midPoints[0][0] = (xPoints[0] + xPoints[1]) / 2;
@@ -85,7 +85,7 @@ public class FractalGenerator implements FractalSubject{
 
             int radius = (int)Math.round(area / sideAvg);
 
-            fractalData.add(new Circle((int) circumcenter[0], (int) circumcenter[1], radius, color));
+            fractalData.add(new Circle((int) circumcenter[0], (int) circumcenter[1], radius, colors));
 
             int[][] t1Coordinates = {
                     {xPoints[0], midPoints[0][0], midPoints[2][0]},
@@ -99,9 +99,9 @@ public class FractalGenerator implements FractalSubject{
                     {midPoints[2][1], midPoints[1][1], yPoints[2]}
             };
 
-            drawRecursiveFractal(t1Coordinates[0], t1Coordinates[1], color, recursionDepth - 1, fractalData);
-            drawRecursiveFractal(t2Coordinates[0], t2Coordinates[1], color, recursionDepth - 1, fractalData);
-            drawRecursiveFractal(t3Coordinates[0], t3Coordinates[1], color, recursionDepth - 1, fractalData);
+            drawRecursiveFractal(t1Coordinates[0], t1Coordinates[1], colors, recursionDepth - 1, fractalData);
+            drawRecursiveFractal(t2Coordinates[0], t2Coordinates[1], colors, recursionDepth - 1, fractalData);
+            drawRecursiveFractal(t3Coordinates[0], t3Coordinates[1], colors, recursionDepth - 1, fractalData);
         }
     }
 

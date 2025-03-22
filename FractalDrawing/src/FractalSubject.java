@@ -8,7 +8,7 @@ public interface FractalSubject {
     public void add(FractalObserver obs);
     public void remove(FractalObserver obs);
     public void notifyObservers();
-    public void setOptions(int depth, int opacity, Color color);
+    public void setOptions(int depth, int opacity, Color[] colors);
     public ArrayList<FractalElement> getFractalData(int width, int height);
 
 }
