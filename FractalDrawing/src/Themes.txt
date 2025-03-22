@@ -1,0 +1,58 @@
+theme_name~color_name~rgb
+Blue Beach~Yale Blue~9, 76, 147
+Blue Beach~Honolulu Blue~12, 115, 178
+Blue Beach~Cyan Cornflower Blue~28, 150, 186
+Blue Beach~Maximum Blue Green~60, 188, 199
+Blue Beach~Pearl~234, 225, 200
+Blue Beach~Dark Vanilla~223, 195, 157
+Brilliant Set~Majorelle Blue~102, 63, 241
+Brilliant Set~Pastel Orange~251, 180, 67
+Brilliant Set~Crayola's Orange-Red~255, 83, 83
+Brilliant Set~Cerise~224, 49, 91
+Heat Wave~Willpower Orange~246,93,11
+Heat Wave~Rust~191,70,12
+Heat Wave~French Puce~78,25,9
+Heat Wave~Pumpkin~247,120,25
+Heat Wave~Dark Tangerine~252,169,15
+Heat Wave~Crayola's Maize~246,199,62
+Neon Slime~Electric Green~28,229,0
+Neon Slime~Harlequin~64,250,0
+Neon Slime~Spring Bud~166,255,0
+Neon Slime~Dodie Yellow~246,255,83
+Neon Slime~Guppie Green~17,255,104
+Snowflakes~Cornsilk~253,249,220
+Snowflakes~White~252,255,254
+Snowflakes~Anti-Flash White~238,246,247
+Snowflakes~Water~207,236,239
+Snowflakes~Pale Cornflower Blue~182,213,243
+Be My Valentine~Frostbite~255, 44, 176
+Be My Valentine~Piggy Pink~251, 225, 232
+Be My Valentine~Cherry Blossom~255, 181, 203
+Be My Valentine~French Pink~254, 105, 151
+Be My Valentine~Cerise~228, 49, 97
+Be My Valentine~Crimson Glory~183, 14, 62
+The Elite~Persian Blue~15, 66, 195
+The Elite~Dark Imperial Blue~6, 26, 116
+The Elite~Burgundy~134, 12, 30
+The Elite~Aztec Gold~185, 159, 93
+The Elite~Mellow Apricot~233, 197, 118
+The Elite~Ruby Red~162, 19, 40
+Avengers Infinity Stones~Crayola's Blue~38, 110, 246
+Avengers Infinity Stones~Electric Purple~191, 0, 255
+Avengers Infinity Stones~American Orange~255, 139, 0
+Avengers Infinity Stones~Boston University Red~198, 4, 4
+Avengers Infinity Stones~Cyber Yellow~255, 211, 0
+Avengers Infinity Stones~American Green~53, 181, 53
+Stardew Valley~Blue Jeans~89, 201, 241
+Stardew Valley~Space Cadet~21, 17, 82
+Stardew Valley~Firebrick~181, 33, 33
+Stardew Valley~Philippine Bronze~107, 55, 16
+Stardew Valley~Indian Yellow~221, 160, 89
+Stardew Valley~Banana Yellow~255, 217, 33
+Man-eater~Light Sky Blue~134, 203, 250
+Man-eater~Picton Blue~74, 158, 231
+Man-eater~Chocolate Brown~63, 0, 12
+Man-eater~Russet~135, 69, 31
+Man-eater~RYB Orange~237, 153, 0
+Man-eater~Rosso Corsa~218, 0, 0
+
