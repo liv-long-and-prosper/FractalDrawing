@@ -4,10 +4,11 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Random;
 
+/**
+ * The type FractalDrawing.
+ */
 public class FractalDrawing extends JFrame implements FractalObserver {
     private int panelWidth;
     private int panelHeight;
@@ -15,6 +16,15 @@ public class FractalDrawing extends JFrame implements FractalObserver {
     private ArrayList<FractalElement> fractalData;
     private JPanel mainPanel;
 
+    /**
+     * Creates the window where the fractal will be displayed
+     *
+     * @param subj The subject to observe
+     * @throws UnsupportedLookAndFeelException
+     * @throws ClassNotFoundException
+     * @throws InstantiationException
+     * @throws IllegalAccessException
+     */
     public FractalDrawing(FractalSubject subj) throws UnsupportedLookAndFeelException, ClassNotFoundException, InstantiationException, IllegalAccessException {
         this.subj = subj;
         subj.add(this);
@@ -65,20 +75,40 @@ public class FractalDrawing extends JFrame implements FractalObserver {
         mainPanel.repaint();
     }
 
+    /**
+     * Get panel width int.
+     *
+     * @return the int
+     */
     public int getPanelWidth(){
         return panelWidth;
     }
 
+    /**
+     * Get panel height int.
+     *
+     * @return the int
+     */
     public int getPanelHeight(){
         return panelHeight;
     }
 
+    /**
+     * Set panel width.
+     *
+     * @param width the width
+     */
     public void setPanelWidth(int width){
-        panelWidth = width;
+        this.panelWidth = width;
     }
 
+    /**
+     * Set panel height.
+     *
+     * @param height the height
+     */
     public void setPanelHeight(int height){
-        panelHeight = height;
+        this.panelHeight = height;
     }
 
     private class DrawPanel extends JPanel{

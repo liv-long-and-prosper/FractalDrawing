@@ -10,6 +10,9 @@ import java.util.Scanner;
 import java.util.Collections;
 import javax.swing.*;
 
+/**
+ * The type Fractal GUI.
+ */
 public class FractalGui extends JFrame {
     private final int STARTING_X = 25;
     private final int RECURSION_MIN = 1;
@@ -71,6 +74,16 @@ public class FractalGui extends JFrame {
         }
     }
 
+    /**
+     * Creates the settings window with sliders for controlling the recursion depth and opacity as well as
+     * a dropdown for color themes, and buttons for selecting the fractal color and generating random fractals
+     *
+     * @param subj The subject that will generate the fractal elements
+     * @throws UnsupportedLookAndFeelException
+     * @throws ClassNotFoundException
+     * @throws InstantiationException
+     * @throws IllegalAccessException
+     */
     public FractalGui(FractalSubject subj) throws UnsupportedLookAndFeelException, ClassNotFoundException, InstantiationException, IllegalAccessException {
         this.subj = subj;
         this.recursionVal = RECURSION_DEFAULT;
@@ -84,9 +97,11 @@ public class FractalGui extends JFrame {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setResizable(false);
 
+        // Create the root panel to add components to
         JPanel mainPanel = new JPanel(null);
         getContentPane().add(mainPanel);
 
+        // Create a panel for the slider to be used for recursion depth
         recursionSliderPanel = new JPanel(new GridLayout(0,1));
         recursionSliderPanel.setBounds(STARTING_X,25, SLIDER_PANEL_WIDTH,SLIDER_PANEL_HEIGHT);
         mainPanel.add(recursionSliderPanel);
@@ -96,6 +111,7 @@ public class FractalGui extends JFrame {
         recursionLabel.setVerticalAlignment(SwingConstants.BOTTOM);
         recursionSliderPanel.add(recursionLabel);
 
+        // Create the recursion slider
         recursionSlider = createSlider(RECURSION_MIN, RECURSION_MAX, RECURSION_DEFAULT, 1, false);
         recursionSliderPanel.add(recursionSlider);
         recursionSlider.addChangeListener(e -> {
@@ -103,6 +119,7 @@ public class FractalGui extends JFrame {
                 subj.setOptions(recursionVal, opacityVal, colorThemes.get(selectedTheme));
         });
 
+        // Create a panel to be used for opacity level
         opacitySliderPanel = new JPanel(new GridLayout(0,1));
         opacitySliderPanel.setBounds(STARTING_X,recursionSliderPanel.getY()+recursionSliderPanel.getHeight(),SLIDER_PANEL_WIDTH,SLIDER_PANEL_HEIGHT);
         mainPanel.add(opacitySliderPanel);
@@ -112,13 +129,16 @@ public class FractalGui extends JFrame {
         opacityLabel.setVerticalAlignment(SwingConstants.BOTTOM);
         opacitySliderPanel.add(opacityLabel);
 
+        // Create opacity slider
         opacitySlider = createSlider(OPACITY_MIN, OPACITY_MAX, OPACITY_DEFAULT, OPACITY_SLIDER_INCREMENTS, true);
         opacitySliderPanel.add(opacitySlider);
         opacitySlider.addChangeListener(e -> {
             if(!opacitySlider.getValueIsAdjusting()) {
+                // Get the desired opacity level & calculate the corresponding alpha value
                 opacityVal = opacitySlider.getValue();
                 int alphaVal = (opacityVal * 255) / 100;
 
+                // For each theme, loop through the colors in the theme and set the opacity level
                 for(String theme : colorThemes.keySet()){
                     Color[] colors = colorThemes.get(theme);
                     if (colors != null){
@@ -129,15 +149,16 @@ public class FractalGui extends JFrame {
                     }
                 }
 
+                // Set the current solid color's opacity
                 currentColor = new Color(currentColor.getRed(), currentColor.getGreen(), currentColor.getBlue(), alphaVal);
                 colorThemes.put("Solid", new Color[]{currentColor});
 
                 updateColorPreview();
-//                chosenColor.setBackground(currentColor);
                 subj.setOptions(recursionVal, opacityVal, colorThemes.get(selectedTheme));
             }
         });
 
+        // Create and add the themeSelector if colorThemes isn't empty or null and themeNames has a length greater than 1
         if(colorThemes != null && !colorThemes.isEmpty() && themeNames.length > 1) {
             themeSelectorLabel = new JLabel("Color theme");
             themeSelectorLabel.setHorizontalAlignment(0);
@@ -152,9 +173,10 @@ public class FractalGui extends JFrame {
             themeSelector.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
+                    // Change selectedTheme to the desired theme if it is not null
                     if(themeSelector.getSelectedItem() != null){
                         selectedTheme = (String) themeSelector.getSelectedItem();
-                        fractalColor.setEnabled(selectedTheme.equals("Solid"));
+                        fractalColor.setEnabled(selectedTheme.equals("Solid")); // disable/enable color chooser button depending on selectedTheme
                     }
                     updateColorPreview();
                     subj.setOptions(recursionVal, opacityVal, colorThemes.get(selectedTheme));
@@ -162,6 +184,7 @@ public class FractalGui extends JFrame {
             });
         }
 
+        // Create panel to display current colors being used
         colorPreviewPanel = new JPanel();
         colorPreviewPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 5));
         mainPanel.add(colorPreviewPanel);
@@ -175,9 +198,11 @@ public class FractalGui extends JFrame {
         fractalColor.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                // Change the currentColor to be the chosen color
                 Color initialColor = currentColor;
                 currentColor = JColorChooser.showDialog(mainPanel, "Select a color", initialColor);
 
+                // Set currentColor to the desired color with the selected opacity
                 if(currentColor != null) {
                     int alphaVal = (opacityVal * 255) / 100;
                     currentColor = new Color(currentColor.getRed(), currentColor.getGreen(), currentColor.getBlue(), alphaVal);
@@ -193,6 +218,8 @@ public class FractalGui extends JFrame {
         drawFractal = new JButton("DRAW THE FRACTAL!");
         drawFractal.setBounds(STARTING_X+75,fractalColor.getY()+fractalColor.getHeight()+25,200,30);
         mainPanel.add(drawFractal);
+        // Generate a random fractal whenever this button is pressed
+        // Will only generate a random fractal with the solid theme
         drawFractal.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -207,19 +234,17 @@ public class FractalGui extends JFrame {
                 int randomAlpha = (randomOpacity*255)/100;
                 currentColor = new Color(rand.nextInt(0,256), rand.nextInt(0,256), rand.nextInt(0,256), randomAlpha);
 
-                if (currentColor != null) {
-                    Color[] randomColorArray = new Color[]{currentColor};
-                    colorThemes.put("Solid", randomColorArray);
+                Color[] randomColorArray = new Color[]{currentColor};
+                colorThemes.put("Solid", randomColorArray);
 
-                    selectedTheme = "Solid";
-                    if (themeSelector != null) {
-                        themeSelector.setSelectedItem(selectedTheme);
-                    }
-
-                    fractalColor.setEnabled(true);
-                    updateColorPreview();
-                    subj.setOptions(randomDepth, randomOpacity, randomColorArray);
+                selectedTheme = "Solid";
+                if (themeSelector != null) {
+                    themeSelector.setSelectedItem(selectedTheme);
                 }
+
+                fractalColor.setEnabled(true);
+                updateColorPreview();
+                subj.setOptions(randomDepth, randomOpacity, randomColorArray);
             }
         });
 
@@ -228,6 +253,13 @@ public class FractalGui extends JFrame {
         setVisible(true);
     }
 
+    /**
+     * GetColorThemes reads color theme data from a file and generates an array of theme names
+     * and a hashmap of String objects for theme names as keys and corresponding Color[] of colors per theme as values
+     *
+     * @param scanner a scanner object
+     * @return a String array of theme names
+     */ 
     private static String[] getColorThemes(Scanner scanner){
         scanner.nextLine();
 
@@ -269,23 +301,21 @@ public class FractalGui extends JFrame {
         return themeNames.toArray(new String[0]);
     }
 
-    public Color getCurrentColor(){
-        return currentColor;
-    }
-
-    public int getRecursionVal(){
-        return recursionVal;
-    }
-
-    public int getOpacityVal(){
-        return opacityVal;
-    }
-
+    /**
+     * UpdateColorPreview updates the color preview panel to show the current colors.
+     * In the case of the Solid theme, it shows just one color.
+     * For other themes, it shows all the colors corresponding to that theme.
+     */
     private void updateColorPreview(){
-        colorPreviewPanel.removeAll();
-        themeColorPanels.clear();
         JPanel colorPanel;
 
+        // clears the panel
+        colorPreviewPanel.removeAll();
+        themeColorPanels.clear();
+
+        /* if selectedTheme has not been chosen in the case of the Themes.txt file being unreadable
+            or if the selectedTheme is solid - then the colorPreviewPanel will only display the one color
+        */
         if( selectedTheme == null || selectedTheme.equals("Solid")){
             colorPanel = new JPanel();
             colorPanel.setPreferredSize(new Dimension(50, 30));
@@ -294,6 +324,9 @@ public class FractalGui extends JFrame {
             colorPreviewPanel.add(colorPanel);
             themeColorPanels.add(colorPanel);
         }else{
+            /*
+            * otherwise add each color that corresponds to the selectedTheme
+            * */
             Color[] themeColors = colorThemes.get(selectedTheme);
 
             if(themeColors != null){
@@ -308,31 +341,50 @@ public class FractalGui extends JFrame {
             }
         }
 
+        // Each row should have a maximum of 6 panels
         int rows = Math.ceilDiv(themeColorPanels.size(), 6);
         int height = rows*35;
         int y;
+
+        // calculate the starting y coordinate based upon whether the themeSelector exists or not
         if ( themeSelector != null ){
             y = themeSelector.getY()+themeSelector.getHeight()+25;
         }else{
             y = opacitySlider.getY()+opacitySlider.getHeight()+25;
         }
+
         colorPreviewPanel.setBounds(STARTING_X, y, SLIDER_PANEL_WIDTH, height);
         colorPreviewPanel.revalidate();
         colorPreviewPanel.repaint();
 
+        // reposition components added after the colorPreviewPanel
         repositionComponents();
     }
 
+    /**
+     * RepositionComponents adjusts the position of the other components when needed to ensure they do not overlap
+     */
     private void repositionComponents(){
         fractalColor.setBounds(STARTING_X+100, colorPreviewPanel.getY()+colorPreviewPanel.getHeight()+10, 150, 30);
         drawFractal.setBounds(STARTING_X+75, fractalColor.getY()+fractalColor.getHeight()+25, 200,30);
 
+        // adjust the main panel height to fit the drawFractal button in case the colorPreviewPanel gets too large
         int minMainPanelHeight = drawFractal.getY()+drawFractal.getHeight()+50;
         if (minMainPanelHeight > MAIN_PANEL_HEIGHT){
             setSize(MAIN_PANEL_WIDTH, minMainPanelHeight);
         }
     }
 
+    /**
+     * CreateSlider creates a slider with the given specifications; helper method to avoid code replication
+     *
+     * @param sliderMin The minimum value
+     * @param sliderMax The maximum value
+     * @param sliderDefault The starting value
+     * @param spacing The distance between tick marks
+     * @param createStandardLabels Whether number labels need to be specified or not
+     * @return a JSlider
+     */
     private JSlider createSlider(int sliderMin, int sliderMax, int sliderDefault, int spacing, boolean createStandardLabels){
         JSlider slider = new JSlider(sliderMin, sliderMax, sliderDefault);
         if(createStandardLabels){

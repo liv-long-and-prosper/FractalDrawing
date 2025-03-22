@@ -3,6 +3,9 @@ package FractalDrawing.src;
 import java.awt.*;
 import java.util.ArrayList;
 
+/**
+ * The type FractalGenerator.
+ */
 public class FractalGenerator implements FractalSubject{
     private ArrayList<FractalObserver> observers;
     private int recursionDepth;
@@ -13,6 +16,9 @@ public class FractalGenerator implements FractalSubject{
     private int[] circleCoordinates;
 
 
+    /**
+     * Creates a new FractalGenerator.
+     */
     public FractalGenerator() {
         observers = new ArrayList<>();
     }
@@ -55,6 +61,16 @@ public class FractalGenerator implements FractalSubject{
         return fractalData;
     }
 
+    /**
+     * DrawRecursiveFractal recursively creates fractal elements based on the given coordinates and recursion depth
+     * Each recursive loop should create 4 triangles and 4 circles in the middle of said triangles.
+     *
+     * @param xPoints Array of x-coordinates for the current triangle x-points
+     * @param yPoints Array of y-coordinates for the current triangle y-points
+     * @param colors Array of colors to be used for drawing the fractal elements
+     * @param recursionDepth The recursion depth
+     * @param fractalData ArrayList to store the fractal elements
+     */
     private void drawRecursiveFractal(int[] xPoints, int[] yPoints, Color[] colors, int recursionDepth, ArrayList<FractalElement> fractalData) {
         if (recursionDepth == 0) {
             return;
@@ -105,6 +121,18 @@ public class FractalGenerator implements FractalSubject{
         }
     }
 
+    /**
+     * CalculateCircumcenter calculates the circumcenter of a triangle to be used to position a circle within the triangle
+     * If the three points are in a straight line, it finds the center point between them instead.
+     *
+     * @param x1 x-coordinate of the first point
+     * @param y1 y-coordinate of the first point
+     * @param x2 x-coordinate of the second point
+     * @param y2 y-coordinate of the second point
+     * @param x3 x-coordinate of the third point
+     * @param y3 y-coordinate of the third point
+     * @return An array of length 2 containing the x & y coordinates of the circumcenter
+     */
     private double[] calculateCircumcenter(int x1, int y1, int x2, int y2, int x3, int y3) {
         double[] circumCenterCoordinates = new double[2];
 
@@ -127,10 +155,25 @@ public class FractalGenerator implements FractalSubject{
         return circumCenterCoordinates;
     }
 
+    /**
+     * CalculateDistance calculates the distance between two points.
+     *
+     * @param x1 First x position
+     * @param y1 First y position
+     * @param x2 Second x position
+     * @param y2 Second y position
+     * @return the distance
+     */
     private double calculateDistance(int x1, int y1, int x2, int y2) {
         return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
     }
 
+    /**
+     * CalculateTriangleCoordinates generates the inital triangle's x & y coordinates
+     *
+     * @param width How wide the main panel is
+     * @param height How tall the main panel is
+     */
     private void calculateTriangleCoordinates(int width, int height){
         int topCenterX = width/2;
         int topCenterY = 0;
