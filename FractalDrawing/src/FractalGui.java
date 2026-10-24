@@ -29,6 +29,13 @@ public class FractalGui extends JFrame {
     private final int THEME_SELECTOR_HEIGHT = 35;
     private static final Color DEFAULT_COLOR = new Color(255, 183, 206, OPACITY_DEFAULT);
 
+    // Places to look for the themes file, since relative paths depend on the working directory
+    private static final String[] THEME_FILE_PATHS = {
+            "FractalDrawing/src/Themes.txt",
+            "src/Themes.txt",
+            "Themes.txt"
+    };
+
     private JPanel recursionSliderPanel;
     private JLabel recursionLabel;
     private JSlider recursionSlider;
@@ -58,14 +65,22 @@ public class FractalGui extends JFrame {
 
     static {
         colorThemes = new HashMap<>();
+        themeNames = null;
 
-        try {
-            File colorData = new File("FractalDrawing/src/Themes.txt");
-            Scanner scanner = new Scanner(colorData);
-            themeNames = getColorThemes(scanner);
-            scanner.close();
-        } catch (Exception e) {
-            System.err.println("Problem loading theme file: " + e.getMessage());
+        for (String path : THEME_FILE_PATHS) {
+            File colorData = new File(path);
+            if (colorData.exists()) {
+                try (Scanner scanner = new Scanner(colorData)) {
+                    themeNames = getColorThemes(scanner);
+                    break;
+                } catch (Exception e) {
+                    System.err.println("Problem loading theme file at " + path + ": " + e.getMessage());
+                }
+            }
+        }
+
+        if (themeNames == null) {
+            System.err.println("Themes.txt not found. Working directory is: " + new File("").getAbsolutePath());
             themeNames = new String[]{"Solid"};
         }
 
@@ -107,7 +122,7 @@ public class FractalGui extends JFrame {
         mainPanel.add(recursionSliderPanel);
 
         recursionLabel = new JLabel("Recursion depth");
-        recursionLabel.setHorizontalAlignment((int)0.5f);
+        recursionLabel.setHorizontalAlignment(SwingConstants.CENTER);
         recursionLabel.setVerticalAlignment(SwingConstants.BOTTOM);
         recursionSliderPanel.add(recursionLabel);
 
@@ -115,8 +130,8 @@ public class FractalGui extends JFrame {
         recursionSlider = createSlider(RECURSION_MIN, RECURSION_MAX, RECURSION_DEFAULT, 1, false);
         recursionSliderPanel.add(recursionSlider);
         recursionSlider.addChangeListener(e -> {
-                recursionVal = recursionSlider.getValue();
-                subj.setOptions(recursionVal, opacityVal, colorThemes.get(selectedTheme));
+            recursionVal = recursionSlider.getValue();
+            subj.setOptions(recursionVal, opacityVal, colorThemes.get(selectedTheme));
         });
 
         // Create a panel to be used for opacity level
@@ -125,7 +140,7 @@ public class FractalGui extends JFrame {
         mainPanel.add(opacitySliderPanel);
 
         opacityLabel = new JLabel("Circle opacity");
-        opacityLabel.setHorizontalAlignment((int)0.5f);
+        opacityLabel.setHorizontalAlignment(SwingConstants.CENTER);
         opacityLabel.setVerticalAlignment(SwingConstants.BOTTOM);
         opacitySliderPanel.add(opacityLabel);
 
@@ -161,12 +176,12 @@ public class FractalGui extends JFrame {
         // Create and add the themeSelector if colorThemes isn't empty or null and themeNames has a length greater than 1
         if(colorThemes != null && !colorThemes.isEmpty() && themeNames.length > 1) {
             themeSelectorLabel = new JLabel("Color theme");
-            themeSelectorLabel.setHorizontalAlignment(0);
-            themeSelectorLabel.setBounds(STARTING_X, opacitySliderPanel.getY() + opacitySliderPanel.getHeight() + 25, SLIDER_PANEL_WIDTH, THEME_SELECTOR_HEIGHT);
+            themeSelectorLabel.setHorizontalAlignment(SwingConstants.CENTER);
+            themeSelectorLabel.setBounds(STARTING_X, opacitySliderPanel.getY() + opacitySliderPanel.getHeight() + 30, SLIDER_PANEL_WIDTH, THEME_SELECTOR_HEIGHT);
             mainPanel.add(themeSelectorLabel);
 
             themeSelector = new JComboBox<>(themeNames);
-            themeSelector.setBounds(STARTING_X, themeSelectorLabel.getY() + themeSelectorLabel.getHeight(), SLIDER_PANEL_WIDTH, THEME_SELECTOR_HEIGHT);
+            themeSelector.setBounds(STARTING_X, themeSelectorLabel.getY() + themeSelectorLabel.getHeight() + 30, SLIDER_PANEL_WIDTH, THEME_SELECTOR_HEIGHT);
             mainPanel.add(themeSelector);
             themeSelector.setSelectedItem("Solid");
 
@@ -191,7 +206,6 @@ public class FractalGui extends JFrame {
 
         currentColor = DEFAULT_COLOR;
         fractalColor = new JButton("Fractal color...");
-        fractalColor.setBounds(STARTING_X+100, colorPreviewPanel.getY()+colorPreviewPanel.getHeight(), 150, 30);
         fractalColor.setEnabled(selectedTheme.equals("Solid"));
         mainPanel.add(fractalColor);
 
@@ -200,12 +214,12 @@ public class FractalGui extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 // Change the currentColor to be the chosen color
                 Color initialColor = currentColor;
-                currentColor = JColorChooser.showDialog(mainPanel, "Select a color", initialColor);
+                Color chosenColor = JColorChooser.showDialog(mainPanel, "Select a color", initialColor);
 
                 // Set currentColor to the desired color with the selected opacity
-                if(currentColor != null) {
+                if(chosenColor != null) {
                     int alphaVal = (opacityVal * 255) / 100;
-                    currentColor = new Color(currentColor.getRed(), currentColor.getGreen(), currentColor.getBlue(), alphaVal);
+                    currentColor = new Color(chosenColor.getRed(), chosenColor.getGreen(), chosenColor.getBlue(), alphaVal);
 
                     Color[] solidColorArray = new Color[]{currentColor};
                     colorThemes.put("Solid", solidColorArray);
@@ -216,7 +230,6 @@ public class FractalGui extends JFrame {
             }});
 
         drawFractal = new JButton("DRAW THE FRACTAL!");
-        drawFractal.setBounds(STARTING_X+75,fractalColor.getY()+fractalColor.getHeight()+25,200,30);
         mainPanel.add(drawFractal);
         // Generate a random fractal whenever this button is pressed
         // Will only generate a random fractal with the solid theme
@@ -248,6 +261,7 @@ public class FractalGui extends JFrame {
             }
         });
 
+        // Positions the color preview panel, the color button, and the draw button
         updateColorPreview();
         subj.setOptions(RECURSION_DEFAULT, OPACITY_DEFAULT, colorThemes.get(selectedTheme));
         setVisible(true);
@@ -259,7 +273,7 @@ public class FractalGui extends JFrame {
      *
      * @param scanner a scanner object
      * @return a String array of theme names
-     */ 
+     */
     private static String[] getColorThemes(Scanner scanner){
         scanner.nextLine();
 
@@ -325,8 +339,8 @@ public class FractalGui extends JFrame {
             themeColorPanels.add(colorPanel);
         }else{
             /*
-            * otherwise add each color that corresponds to the selectedTheme
-            * */
+             * otherwise add each color that corresponds to the selectedTheme
+             * */
             Color[] themeColors = colorThemes.get(selectedTheme);
 
             if(themeColors != null){
@@ -347,10 +361,13 @@ public class FractalGui extends JFrame {
         int y;
 
         // calculate the starting y coordinate based upon whether the themeSelector exists or not
+        // Uses components positioned directly in mainPanel (with setBounds), so the coordinates are valid
+        // before the window is laid out. opacitySlider can't be used here: its coordinates are relative
+        // to opacitySliderPanel and are 0 until the GridLayout runs.
         if ( themeSelector != null ){
             y = themeSelector.getY()+themeSelector.getHeight()+25;
         }else{
-            y = opacitySlider.getY()+opacitySlider.getHeight()+25;
+            y = opacitySliderPanel.getY()+opacitySliderPanel.getHeight()+25;
         }
 
         colorPreviewPanel.setBounds(STARTING_X, y, SLIDER_PANEL_WIDTH, height);
